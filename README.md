@@ -30,6 +30,10 @@ we generate program sketches representing the essential instructions
 and propose a model, **ResActGraph**, to transform these into full programs
 representing the actions needed to perform the activity under the presented environmental constraints.
 
+<br>
+
+### Demo
+
 Here is one short clip where the agent is chilling out in his living room.
 
 <p align="center"><img src="asset/vh_intro.gif" width="600" height="400">
