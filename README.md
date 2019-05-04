@@ -4,17 +4,12 @@ This is the official implementation of ResActGraph (CVPR2019). For technical det
 
 **Synthesizing Environment-Aware Activities via Activity Sketches**
 
-*[Yuan-Hong Liao](https://andrewliao11.github.io)∗, Xavier Puig∗, Marko Boben, Antonio Torralba, Sanja Fidler*
+*[Yuan-Hong Liao](https://andrewliao11.github.io)∗, [Xavier Puig](https://people.csail.mit.edu/xavierpuig/)∗, Marko Boben, [Antonio Torralba](http://web.mit.edu/torralba/www/), [Sanja Fidler](http://www.cs.utoronto.ca/~fidler/)*
 
 If you find the code useful in your research, please consider citing:
 
 ```
-@inproceedings{huang2017densely,
-  title={Densely connected convolutional networks},
-    author={Huang, Gao and Liu, Zhuang and van der Maaten, Laurens and Weinberger, Kilian Q },
-      booktitle={Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition},
-        year={2017}
-}
+ARXIV_INFO
 ```
 
 ## Contents 
@@ -25,20 +20,24 @@ If you find the code useful in your research, please consider citing:
 
 ## Introduction
 
+<img align="right" src="asset/teaser.png" width="350" height="250">
+
 In order to perform activities from demonstrations or descriptions,
 agents need to distill what the essense of the given activity is. 
-In this work, we address the problem of environment-aware program generation.
+In this work, we address the problem of *environment-aware program generation*.
 Given a visual demonstration or a description of an activity, 
 we generate program sketches representing the essential instructions
-and propose a model, `ResActGraph`, to transform these into full programs
+and propose a model, **ResActGraph**, to transform these into full programs
 representing the actions needed to perform the activity under the presented environmental constraints.
 
-<p align="center"><img src="asset/vh_intro.gif" width="450" height="300"><img src="asset/teaser.png" width="350" height="300"></p>
+Here is one short clip where the agent is chilling out in his living room.
+
+<p align="center"><img src="asset/vh_intro.gif" width="600" height="400">
 
 
 ## Environment Setup
 
-### Create a virtual environment (Skip if you already have)
+### Create a virtual environment (Optional)
 
 ```bash
 $ virtualenv -p python3 virtualhome
@@ -50,12 +49,12 @@ $ source virtualhome/bin/activate
 
 ### Install VirtualHome
 To execute or evalutate the sampled programs, VirtualHome need to be installed.
-Please see [here]() for the installation.
+Please see [here](VH_LINK) for the installation.
 
 
-### Dataset structure
+### Data
 
-Download the program dataset [here](xxx) and the augmented program dataset [here](xxx)
+Download the program dataset [here](DATASET_LINK) and the augmented program dataset [here](DATASET_LINK)
 
 Here is how the dataset structure should look like:
 
@@ -65,7 +64,7 @@ dataset
     ├── augment_programs
     │   ├── augment_exception
     │   └── augment_location
-    ├── demos
+    ├── demonstration
     │   ├── images
     │   └── images_augment
     ├── original_programs
