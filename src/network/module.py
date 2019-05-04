@@ -938,7 +938,7 @@ class DemoEncoder(nn.Module):
 
         # Image encoder
         import torchvision
-        resnet = torchvision.models.resnet18(pretrained=False)
+        resnet = torchvision.models.resnet18(pretrained=True)
         resnet = list(resnet.children())[:-1]
 
         self.resnet = nn.Sequential(*resnet)
@@ -996,6 +996,7 @@ class DemoEncoder(nn.Module):
         # do cnn forwarding once
         stacked_demo = [torch.stack(demo, 0) for demo in batch_demo_seg]
         stacked_demo = torch.cat(stacked_demo, 0)
+
         stacked_demo_feat = self.seg_map(stacked_demo)
         stacked_demo_feat = self.seg_feat2hidden(stacked_demo_feat)
         batch_demo_seg_feat = []
@@ -1020,104 +1021,15 @@ class DemoEncoder(nn.Module):
         return demo_emb, batch_demo_feat
 
 
-def chunks(l, n):
-    """Yield successive n-sized chunks from l."""
-
-    m = len(l)
-    splits = np.array_split(np.arange(m), n)
-    for split in splits:
-        yield [l[i] for i in split]
-
-
-class TRNEncoder(nn.Module):
-
-    def __init__(self, dset, demo_hidden):
-
-        super(TRNEncoder, self).__init__()
-
-        # Image encoder
-        import torchvision
-        resnet = torchvision.models.resnet18(pretrained=False)
-        resnet = list(resnet.children())[:-1]
-
-        self.resnet = nn.Sequential(*resnet)
-
-        feat2hidden = nn.Sequential()
-        feat2hidden.add_module(
-            'fc_block1',
-            fc_block(512, demo_hidden, False, nn.ReLU))
-        self.feat2hidden = feat2hidden
-
-        self.seg_map = SegmapCNN()
-        self.seg_feat2hidden = nn.Sequential()
-        self.seg_feat2hidden.add_module(
-            'fc_block1', fc_block(
-                4160, demo_hidden, False, nn.ReLU))
-
-        self.combine = nn.Sequential()
-        self.combine.add_module(
-            'fc_block1',
-            fc_block(
-                2 * demo_hidden,
-                demo_hidden,
-                False,
-                nn.ReLU))
-
-        n_samples = 2
-        self.rn = RelationModule(demo_hidden, demo_hidden, n_samples)
-        self.n_samples = n_samples
-
-    def forward(self, batch_length, batch_demo_rgb, batch_demo_seg):
-
-        # do cnn forwarding once
-        stacked_demo = [
-            torch.stack(
-                demo,
-                0) for demo in batch_demo_rgb]        # B, [T, C, H, W]
-        # [total T, C H, W]
-        stacked_demo = torch.cat(stacked_demo, 0)
-        stacked_demo_rgb_feat = self.resnet(stacked_demo)
-        T, C, H, W = stacked_demo_rgb_feat.size()
-        stacked_demo_rgb_feat = stacked_demo_rgb_feat.view(T, -1)
-        stacked_demo_rgb_feat = self.feat2hidden(stacked_demo_rgb_feat)
-
-        # do cnn forwarding once
-        stacked_demo = [torch.stack(demo, 0) for demo in batch_demo_seg]
-        stacked_demo = torch.cat(stacked_demo, 0)
-        stacked_demo_seg_feat = self.seg_map(stacked_demo)
-        stacked_demo_seg_feat = self.seg_feat2hidden(stacked_demo_seg_feat)
-
-        stacked_demo_feat = torch.cat(
-            [stacked_demo_rgb_feat, stacked_demo_seg_feat], 1)
-        stacked_demo_feat = self.combine(
-            stacked_demo_feat)     # [total T, h]
-    
-        batch_demo_feat = []
-        start = 0
-        for length in batch_length:
-            feat = stacked_demo_feat[start:(start + length), :]
-            split_chunk = [
-                section for section in chunks(
-                    torch.split(
-                        feat,
-                        1),
-                    self.n_samples)]      # split into n_samples chunks
-            feat = self.rn(split_chunk)
-            start += length
-            batch_demo_feat.append(feat)
-
-        demo_emb = torch.stack(batch_demo_feat, 0)
-
-        return demo_emb, batch_demo_feat
-
-
 class SegmapCNN(nn.Module):
 
     def __init__(self):
 
         super(SegmapCNN, self).__init__()
+
+        self.embeddings = nn.Embedding(190, 100)
         self.layer1 = nn.Sequential(
-            nn.Conv2d(3, 16, kernel_size=5, stride=1, padding=2),
+            nn.Conv2d(100, 16, kernel_size=5, stride=1, padding=2),
             nn.BatchNorm2d(16),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2))
@@ -1136,71 +1048,12 @@ class SegmapCNN(nn.Module):
 
     def forward(self, x):
 
-        out = self.layer1(x)
+        # x: B, 1, H, W
+        out = self.embeddings(x.long()).squeeze()
+        # out: B, H, W, C
+        out = self.layer1(out.permute(0, 3, 1, 2))
         out = self.layer2(out)
         out = self.layer3(out)
         out = out.reshape(out.size(0), -1)
         return out
 
-
-class RelationModule(nn.Module):
-
-    def __init__(self, input_dim, hidden, N):
-
-        super(RelationModule, self).__init__()
-        # pairwise
-        relation_g = nn.Sequential()
-        relation_g.add_module(
-            'fc_block1',
-            fc_block(
-                N * input_dim,
-                hidden,
-                False,
-                nn.Tanh))
-        relation_g.add_module(
-            'fc_block2',
-            fc_block(
-                hidden,
-                hidden,
-                False,
-                nn.Tanh))
-
-        relation_f = nn.Sequential()
-        relation_f.add_module(
-            'fc_block1',
-            fc_block(
-                hidden,
-                hidden,
-                False,
-                nn.Tanh))
-        relation_f.add_module(
-            'fc_block2',
-            fc_block(
-                hidden,
-                hidden,
-                False,
-                nn.Tanh))
-
-        self.relation_g = relation_g
-        self.relation_f = relation_f
-        self.N = N
-
-    def forward(self, data):
-        '''
-            data: [(f1, f2, f3), (f4, f5, f6), (f7, f8, f9), ...]
-        '''
-
-        assert self.N == len(data)
-
-        all_pairs = [i for i in itertools.product(*data)]
-        random.shuffle(all_pairs)
-        sampled_pairs = all_pairs[:5]           # sample 5 pairs
-
-        relation = []
-        for pair in sampled_pairs:
-            relation.append(self.relation_g(torch.cat(pair, 1)))
-
-        relation = sum(relation)
-        rn_output = self.relation_f(relation).squeeze()
-
-        return rn_output

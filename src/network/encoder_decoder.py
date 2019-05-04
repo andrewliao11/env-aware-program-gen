@@ -356,9 +356,6 @@ class Demo2Sketch(nn.Module):
         elif model_type.lower() == 'avg':
             from network.module import DemoEncoder
             demo_encoder = DemoEncoder(dset, demo_hidden, 'avg')
-        elif model_type.lower() == 'trn':
-            from network.module import TRNEncoder
-            demo_encoder = TRNEncoder(dset, demo_hidden)
         else:
             raise ValueError
         demo_encoder = torch.nn.DataParallel(demo_encoder)

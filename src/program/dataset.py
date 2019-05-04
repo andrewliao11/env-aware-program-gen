@@ -333,6 +333,7 @@ class program_dset(Dataset):
         self.detail2abstract = load_detail2abstract(object_merged)
         self.programs = train_programs if is_train else test_programs
         self.is_train = is_train
+        self.random_index = is_train
         self.num_actions = action_dict.n_words
         self.num_objects = object_dict.n_words
         self.initial_program = (int(action_dict.word2idx['<sos>']),
@@ -713,12 +714,9 @@ class program_dset(Dataset):
         # get the sketch object and index within the program
         sketch_instance1, sketch_object1 = self._convert_fake_node_idx_to_node_name(
             sketch_fake_node1_name)
-        sketch_index1 = self._get_index_within_program(
-            sketch_instance1, sketch_object1)
-        sketch_instance2, sketch_object2 = self._convert_fake_node_idx_to_node_name(
-            sketch_fake_node2_name)
-        sketch_index2 = self._get_index_within_program(
-            sketch_instance2, sketch_object2)
+        sketch_index1 = self._get_index_within_program(sketch_instance1, sketch_object1, random=self.random_index)
+        sketch_instance2, sketch_object2 = self._convert_fake_node_idx_to_node_name(sketch_fake_node2_name)
+        sketch_index2 = self._get_index_within_program(sketch_instance2, sketch_object2, random=self.random_index)
 
         sketch_object1 = add_end(
             add_front(sketch_object1, int(self.object_dict.word2idx['<sos>'])), 
@@ -784,11 +782,12 @@ class program_dset(Dataset):
 
         return instance_list, object_list
 
-    def _get_index_within_program(self, instance_list, object_list):
+    def _get_index_within_program(self, instance_list, object_list, random=True):
 
         objs_id2index = {i: {"available_index": np.arange(
             self.max_indexes)} for i in object_list}
         index_list = []
+
         for obj_instance in instance_list:
             name, id = obj_instance.split('.')
             if '<none>' in name:
@@ -798,7 +797,11 @@ class program_dset(Dataset):
                 id2index = objs_id2index[name]
 
                 if id not in id2index:
-                    index = np.random.choice(id2index["available_index"])
+                    if random:
+                        index = np.random.choice(id2index["available_index"])
+                    else:
+                        index = np.min(id2index["available_index"])
+
                     i_to_removed = np.where(
                         id2index["available_index"] == index)[0][0]
                     id2index["available_index"] = np.delete(
@@ -809,7 +812,7 @@ class program_dset(Dataset):
 
                 index = int(self.index_dict.word2idx[str(index)])
                 index_list.append(index)
-
+                
         return index_list
 
     def _sample_one_program_w_annotation(self, program):

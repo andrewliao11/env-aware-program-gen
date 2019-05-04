@@ -25,6 +25,7 @@ resource_dir = os.path.join(cur_dir, '../../dataset/VirtualHome-Env/resources/')
 program_path = dataset_dir + 'original_programs/executable_programs/*/*/*txt'
 augment_program_path = dataset_dir + 'augment_programs/*/executable_programs/*/*/*/*txt'
 sketch_path = dataset_dir + 'sketch_annotation.json'
+class2rgb_path = resource_dir + 'class2rgb.txt'
 
 object_merged = resource_dir + 'object_merged.json'
 train_patt = dataset_dir + 'split/train_progs_path.txt'
@@ -220,7 +221,7 @@ class demo_dset(Dataset):
 
         # get image pattern
         image_path = glob(dataset_dir + 'demonstration/images/*/*/*/normal.png') + \
-                        glob(dataset_dir + 'demonstration/images_augment/*/*/*/*/normal.png')
+                        glob(dataset_dir + 'demonstration/images_augment/*/*/*/*/*/normal.png')
 
         print("-" * 30)
         print("Total available images: {}".format(len(image_path)))
@@ -464,17 +465,13 @@ class demo_dset(Dataset):
         file_path = program['file_path']
 
         # load the images
-        rgb_img = self._process_one_img(program['image_path'])
-        rgb_img = [
-            self.rgb_image_transform(
-                Image.fromarray(img)) for img in rgb_img]
-        seg_img = self._process_one_img(
-            program["image_path"].replace(
-                "normal.png", "seg_class.png"))
-        seg_img = [
-            self.seg_image_transform(
-                Image.fromarray(img)) for img in seg_img]
-        #seg_img = self._convert_to_onehot_label(seg_img)
+        img_path = program["image_path"]
+        rgb_img = self._process_one_img(img_path, mode='rgb')
+        rgb_img = [self.rgb_image_transform(Image.fromarray(img)) for img in rgb_img]
+
+        seg_path = img_path.replace("normal.png", "seg_class.png")
+        seg_img = self._process_one_img(seg_path, mode='segmap')
+        seg_img = [self.seg_image_transform(Image.fromarray(img)) for img in seg_img]
 
         image_length = len(rgb_img)
 
@@ -484,13 +481,22 @@ class demo_dset(Dataset):
         data = [image_data, sketch_data, path]
         return data
 
-    def _process_one_img(self, path):
+    def _rgb2id(self, img, bins=9):
+        expansion = int(255 / (bins - 1))
+        return img[:,:,2].astype(np.int32)/expansion + \
+            bins*img[:,:,1].astype(np.int32)/expansion + \
+            bins*bins*img[:,:,0].astype(np.int32)/expansion
+
+    def _process_one_img(self, path, mode='rgb'):
 
         image = imageio.imread(path)
         # image size: 480, 640, 3
         H, _, _ = image.shape
         top_view_images = image[:, :640, :]
         top_view_images = np.array(top_view_images)
+        if mode == 'segmap':
+            top_view_images = self._rgb2id(top_view_images)
+
         top_view_images_list = np.array_split(top_view_images, H / 480, 0)
         return top_view_images_list
 

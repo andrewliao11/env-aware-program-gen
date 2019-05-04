@@ -36,9 +36,8 @@ def grab_args():
         type=str,
         default='max',
         choices=[
-            'avg',
             'max',
-            'trn'])
+            'avg'])
     parser.add_argument('--embedding_dim', type=int, default=100)
     parser.add_argument('--sketch_hidden', type=int, default=128)
     parser.add_argument('--demo_hidden', type=int, default=128)
