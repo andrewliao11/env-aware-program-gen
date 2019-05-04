@@ -1,3 +1,4 @@
+# link to VirtualHome
 import sys
 sys.path.append('../../virtualhome/simulation')
 
