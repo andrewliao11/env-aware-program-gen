@@ -1,8 +1,8 @@
 # Models
 
-Here we will split the model into two parts, program generation and sketch generation. For program generation we provide the implementatino of **ResActgraph** and some baselines in the paper.
+Here, we will split the model into two parts, [program generation](https://github.com/andrewliao11/env-aware-program-gen/tree/master/src#program-generation) and [sketch generation](https://github.com/andrewliao11/env-aware-program-gen/tree/master/src#sketch-generation). For program generation we provide the implementation of **ResActgraph** and some baselines in the paper. Also, all the trained weights can be found at [here](https://drive.google.com/open?id=1d5Y1f7tAqO4Ak70RvERusWEYWHIgneJv)
 
-The achitectural overview of **ResActGraph**:
+The achitectural overview of ResActGraph:
 
 <p align="center"><img src="/asset/model.png"  height="300"></p>
 
@@ -35,7 +35,7 @@ Note: Files called `src/close_ids.npz` and `src/.sketch_and_prog_train.npz` will
 
 The tensorboard files and checkpoints will be saved into `src/checkpoint_dir`
 
-We provide the pre-trained weights for `resactgraph` at [here](WEIGHT_LINK).
+We provide the trained weights of `resactgraph` at [here](https://drive.google.com/open?id=1g027GxdM4lK9xAKPpEbzaeQd-SVs6gVk).
 
 
 ### Evaluating
@@ -93,7 +93,7 @@ Note: Program is one kind of formal language, so we can apply a simple grammar c
 ```
 
 Run `sketch_test.py` and the output file will be dumped in a json file.
-We provide the output json file from at `src/sketch_prediction`
+We provide the output json file from at `src/sketch_prediction` and the trained weight at [here](https://drive.google.com/open?id=1eHbm9v9j0JewChayldvOuUcZkVHkN-p3) and [here](https://drive.google.com/open?id=1eFqLe4nJ10SdzFwHI8xrvzYtJPF6XVs7).
 
 ## Sketch generation + Program generation
 
