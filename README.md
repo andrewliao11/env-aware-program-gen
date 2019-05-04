@@ -1,6 +1,6 @@
 # Synthesizing Environment-Aware Activities via Activity Sketches
 
-This is the official implementation of ResActGraph (CVPR2019). For technical details, please refer to [here](ARXIV_LINK)
+This is the official implementation of ResActGraph (CVPR2019). For technical details, please refer to [here](ARXIV_LINK).
 
 **Synthesizing Environment-Aware Activities via Activity Sketches**
 
@@ -53,12 +53,12 @@ $ source virtualhome/bin/activate
 
 ### Install VirtualHome
 To execute or evalutate the sampled programs, VirtualHome need to be installed.
-Please see [here](VH_LINK) for the installation.
+Please see [here](https://github.com/xavierpuigf/virtualhome) for the installation.
 
 
 ### Data
 
-Download the program dataset [here](DATASET_LINK) and the augmented program dataset [here](DATASET_LINK)
+Download the program dataset [here](http://virtual-home.org).
 
 Here is how the dataset structure should look like:
 
