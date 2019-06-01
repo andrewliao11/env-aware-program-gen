@@ -55,7 +55,7 @@ Note: Program is one kind of formal language, so we can apply a simple grammar c
 
 - Trained model evaluated with different evaluation metrics
 
-|                   | LCS | F1-relation | F1-attribute | F1  |parsibility|executability|
+|                   | LCS | F1-relation | F1-state | F1  |parsibility|executability|
 |------------------ |-----|-------------|--------------|-----|-----------|-------------|
 | Nearest Neighbour |0.127|     0.019   |     0.288    |0.041|     -     |       -     |
 | Unary             |0.372|     0.160   |     0.142    |0.159|  0.753    |     0.248   |
@@ -67,7 +67,7 @@ Note: Program is one kind of formal language, so we can apply a simple grammar c
 
 - The improvement after applying the grammar constraint during inference
 
-|                              | LCS | F1-relation | F1-attribute | F1  |parsibility|executability|
+|                              | LCS | F1-relation | F1-state | F1  |parsibility|executability|
 |------------------------------|-----|-------------|--------------|-----|-----------|-------------|
 | Unary (w/ constraint)        |0.356|    0.124    |     0.125    |0.124|    0.675  |   0.159     |
 | Graph (w/ constraint)        |0.401|    0.189    |     0.187    |0.186|    0.975  |   0.261     |
@@ -113,7 +113,7 @@ Add the flag `--sketch_path` to specify the the path to the sketch prediction (b
 
 - Generate program from descriptions
 
-|                   | LCS | F1-relation | F1-attribute | F1  |parsibility|executability|
+|                   | LCS | F1-relation | F1-state | F1  |parsibility|executability|
 |------------------ |-----|-------------|--------------|-----|-----------|-------------|
 | Unary             |0.289|     0.188   |     0.191    |0.189|    0.734  |   0.444     |
 | Graph             |0.297|     0.24    |     0.233    |0.241|    0.899  |   0.439     |
@@ -122,7 +122,7 @@ Add the flag `--sketch_path` to specify the the path to the sketch prediction (b
 
 - Generate program from demonstrations
 
-|                   | LCS | F1-relation | F1-attribute | F1  |parsibility|executability|
+|                   | LCS | F1-relation | F1-state | F1  |parsibility|executability|
 |------------------ |-----|-------------|--------------|-----|-----------|-------------|
 | Unary             |0.257|     0.099   |     0.09     |0.098|    0.74   |   0.256     |
 | Graph             |0.284|     0.202   |     0.202    |0.203|    0.828  |   0.343     |
