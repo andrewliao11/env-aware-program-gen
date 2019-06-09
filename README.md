@@ -9,7 +9,13 @@ This is the official implementation of ResActGraph (CVPR2019). For technical det
 If you find the code useful in your research, please consider citing:
 
 ```
-ARXIV_INFO
+@InProceedings{Liao_2019_CVPR,
+author = {Liao, Yuan-Hong and Puig, Xavier and Boben, Marko and Torralba, Antonio and Fidler, Sanja},
+title = {Synthesizing Environment-Aware Activities via Activity Sketches},
+booktitle = {The IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+month = {June},
+year = {2019}
+}
 ```
 
 ## Contents 
