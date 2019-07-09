@@ -1,8 +1,8 @@
 # Synthesizing Environment-Aware Activities via Activity Sketches
 
-This is the official implementation of ResActGraph (CVPR2019). For technical details, please refer to [here](http://openaccess.thecvf.com/content_CVPR_2019/papers/Liao_Synthesizing_Environment-Aware_Activities_via_Activity_Sketches_CVPR_2019_paper.pdf).
+This is the official implementation of ResActGraph (CVPR2019).
 
-**Synthesizing Environment-Aware Activities via Activity Sketches**
+[**Synthesizing Environment-Aware Activities via Activity Sketches**](http://openaccess.thecvf.com/content_CVPR_2019/papers/Liao_Synthesizing_Environment-Aware_Activities_via_Activity_Sketches_CVPR_2019_paper.pdf)
 
 *[Yuan-Hong Liao](https://andrewliao11.github.io)∗, [Xavier Puig](https://people.csail.mit.edu/xavierpuig/)∗, Marko Boben, [Antonio Torralba](http://web.mit.edu/torralba/www/), [Sanja Fidler](http://www.cs.utoronto.ca/~fidler/)*
 
